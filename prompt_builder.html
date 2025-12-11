@@ -1,0 +1,484 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>SUNO Style Prompt Builder (JP Labels)</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 20px;
+      background: #111;
+      color: #eee;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-size: 16px;
+      margin: 18px 0 6px;
+    }
+    .group {
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #333;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    label.toggle {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      cursor: pointer;
+      font-size: 11px;
+      user-select: none;
+      background: #1c1c1c;
+    }
+    label.toggle input {
+      display: none;
+    }
+    label.toggle.active {
+      background: #3b82f6;
+      border-color: #60a5fa;
+      color: #fff;
+    }
+    textarea {
+      width: 100%;
+      height: 160px;
+      margin-top: 10px;
+      padding: 8px;
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 13px;
+      background: #050505;
+      color: #f5f5f5;
+      border: 1px solid #333;
+      border-radius: 4px;
+      resize: vertical;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 6px 14px;
+      border-radius: 4px;
+      border: none;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    #copyButton {
+      background: #22c55e;
+      color: #000;
+    }
+    #resetButton {
+      background: #444;
+      color: #eee;
+    }
+    .bpm-input {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    .bpm-input input {
+      width: 70px;
+      padding: 4px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      background: #050505;
+      color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <h1>SUNO Style Prompt Builder (JP Labels)</h1>
+
+  <!-- 全体 -->
+  <div class="group">
+    <h2>全体（Overall）</h2>
+    <div>感情（Feeling）：</div>
+    <div class="btn-row" data-group="feeling">
+      <label class="toggle" title="怒り・攻撃的"><input type="checkbox" value="anger">怒り</label>
+      <label class="toggle" title="自信と高揚感"><input type="checkbox" value="confident">自信・高揚</label>
+      <label class="toggle" title="憂うつ・沈み込み"><input type="checkbox" value="sad">憂うつ</label>
+      <label class="toggle" title="夢見心地で浮かんでいる感覚"><input type="checkbox" value="dreamy">夢見心地</label>
+      <label class="toggle" title="不安・そわそわ"><input type="checkbox" value="anxious">不安</label>
+      <label class="toggle" title="多幸感・幸福感"><input type="checkbox" value="joyful">多幸感</label>
+      <label class="toggle" title="切なさ・物悲しさ"><input type="checkbox" value="melancholic">切なさ</label>
+      <label class="toggle" title="感情が麻痺したニュートラルさ"><input type="checkbox" value="numb">無感覚</label>
+      <label class="toggle" title="張り詰めた緊張感"><input type="checkbox" value="tense">緊張</label>
+      <label class="toggle" title="落ち着きと静けさ"><input type="checkbox" value="calm">落ち着き</label>
+      <label class="toggle" title="内側でくすぶる熱"><input type="checkbox" value="brooding">くすぶる熱</label>
+      <label class="toggle" title="抑え込まれてうずく衝動"><input type="checkbox" value="restless">うずく衝動</label>
+      <label class="toggle" title="抑制されつつも強いエネルギー"><input type="checkbox" value="controlled">抑制された強度</label>
+      <label class="toggle" title="内側から盛り上がる勢い"><input type="checkbox" value="surging">内側のうねり</label>
+      <label class="toggle" title="じわじわ続く熱量"><input type="checkbox" value="slow burn">スローバーン</label>
+      <label class="toggle" title="前向きで希望を感じる"><input type="checkbox" value="hopeful">希望</label>
+      <label class="toggle" title="解放感・浄化でスッキリ"><input type="checkbox" value="cathartic">カタルシス</label>
+      <label class="toggle" title="甘くロマンチック"><input type="checkbox" value="romantic">ロマンチック</label>
+      <label class="toggle" title="勝利感・達成感"><input type="checkbox" value="triumphant">トライアンフ</label>
+      <label class="toggle" title="不穏で掴みどころがない"><input type="checkbox" value="mysterious">ミステリアス</label>
+    </div>
+    <div>汚さ（Dirt）：</div>
+    <div class="btn-row" data-group="dirt">
+      <label class="toggle" title="クリーンで整理された音"><input type="checkbox" value="clean">クリーン</label>
+      <label class="toggle" title="ほんの少し汚れた質感"><input type="checkbox" value="slightly dirty">ややダーティ</label>
+      <label class="toggle" title="テープっぽい柔らかい飽和"><input type="checkbox" value="tape warmth">テープ感</label>
+      <label class="toggle" title="帯域狭めでチープな質感"><input type="checkbox" value="lo-fi">ローファイ</label>
+      <label class="toggle" title="ザラついた粗さ"><input type="checkbox" value="gritty">グリッティ</label>
+      <label class="toggle" title="強めに押しつぶした飽和感"><input type="checkbox" value="saturated">サチュレート</label>
+      <label class="toggle" title="軽いオーバードライブの汚れ"><input type="checkbox" value="overdriven dirt">軽いダート</label>
+      <label class="toggle" title="ファズ気味の汚れ"><input type="checkbox" value="fuzzy dirt">ファズっぽいダート</label>
+      <label class="toggle" title="ノイズ混じりで荒れた音"><input type="checkbox" value="noisy">ノイジー</label>
+      <label class="toggle" title="歪みとノイズまみれの汚音"><input type="checkbox" value="filthy">フィルシー</label>
+    </div>
+    <div>密度（Density）：</div>
+    <div class="btn-row" data-group="density">
+      <label class="toggle" title="音数少ないがグルーヴ重視"><input type="checkbox" value="minimal groove">ミニマルグルーヴ</label>
+      <label class="toggle" title="軽めで余白多め"><input type="checkbox" value="light">ライト</label>
+      <label class="toggle" title="標準的な密度"><input type="checkbox" value="medium">ミドル</label>
+      <label class="toggle" title="やや詰まり気味"><input type="checkbox" value="dense">デンス</label>
+      <label class="toggle" title="厚いけど分離はある"><input type="checkbox" value="thick but clear">厚いけどクリア</label>
+      <label class="toggle" title="音の壁でみっちり"><input type="checkbox" value="wall of sound">ウォール・オブ・サウンド</label>
+      <label class="toggle" title="打楽器/リズム要素が多い"><input type="checkbox" value="percussive busy">パーカッシブ多め</label>
+      <label class="toggle" title="音数少ないが広がり重視"><input type="checkbox" value="sparse but wide">スカスカだけどワイド</label>
+    </div>
+    <div class="bpm-input">
+      <span>BPM：</span>
+      <input type="number" id="bpmInput" value="120" min="40" max="260" />
+    </div>
+  </div>
+
+  <!-- ジャンル -->
+  <div class="group">
+    <h2>ジャンル（Genre）</h2>
+    <div class="btn-row" data-group="genre">
+      <!-- コア3種（常連） -->
+      <label class="toggle" title="グランジ">
+        <input type="checkbox" value="grunge">グランジ
+      </label>
+      <label class="toggle" title="プログレッシブ（ロック／メタル全般を含む広義のprogressive）">
+        <input type="checkbox" value="progressive">プログレッシブ
+      </label>
+      <label class="toggle" title="シューゲイザー">
+        <input type="checkbox" value="shoegaze">シューゲイザー
+      </label>
+
+      <!-- 方向性をちょい足しできるロック寄りジャンルたち -->
+      <label class="toggle" title="ロック全般">
+        <input type="checkbox" value="rock">ロック
+      </label>
+      <label class="toggle" title="ややハードなロック">
+        <input type="checkbox" value="hard rock">ハードロック
+      </label>
+      <label class="toggle" title="パンクの勢い">
+        <input type="checkbox" value="punk">パンク
+      </label>
+      <label class="toggle" title="オルタナティブな質感">
+        <input type="checkbox" value="alternative">オルタナ
+      </label>
+      <label class="toggle" title="インディ寄りの質感">
+        <input type="checkbox" value="indie">インディ
+      </label>
+      <label class="toggle" title="ポップ寄りの要素">
+        <input type="checkbox" value="pop">ポップ
+      </label>
+      <label class="toggle" title="エモ／ポストハードコアの熱量">
+        <input type="checkbox" value="emo / post-hardcore">エモ/ポストハードコア
+      </label>
+      <label class="toggle" title="シューゲイザーの壁感と揺らぎ">
+        <input type="checkbox" value="shoegaze">シューゲイザー
+      </label>
+      <label class="toggle" title="ブリットポップ的なキャッチーさ">
+        <input type="checkbox" value="britpop">ブリットポップ
+      </label>
+      <label class="toggle" title="サーフロックの軽快さ">
+        <input type="checkbox" value="surf">サーフ
+      </label>
+      <label class="toggle" title="サイケデリックな広がり">
+        <input type="checkbox" value="psychedelic">サイケ
+      </label>
+      <label class="toggle" title="ファンクのグルーヴ感">
+        <input type="checkbox" value="funk">ファンク
+      </label>
+      <label class="toggle" title="ブルースの味わい">
+        <input type="checkbox" value="blues">ブルース
+      </label>
+      <label class="toggle" title="ジャズ風味を感じる">
+        <input type="checkbox" value="jazz flavor">ジャズ風味
+      </label>
+      <label class="toggle" title="アンビエントで漂う感じ">
+        <input type="checkbox" value="ambient">アンビエント
+      </label>
+      <label class="toggle" title="シンセ多めの方向性">
+        <input type="checkbox" value="synth">シンセ
+      </label>
+      <label class="toggle" title="エレクトロ寄り全般">
+        <input type="checkbox" value="electronic">エレクトロ
+      </label>
+      <label class="toggle" title="ローファイ質感">
+        <input type="checkbox" value="lo-fi">ローファイ
+      </label>
+      <label class="toggle" title="メタルざっくり">
+        <input type="checkbox" value="metal">メタル
+      </label>
+    </div>
+  </div>
+
+  <!-- ギター -->
+  <div class="group">
+    <h2>ギター（Guitar）</h2>
+    <div>歪み：</div>
+    <div class="btn-row" data-group="gtr-dist">
+      <label class="toggle" title="潰れた毛羽立つ歪み"><input type="checkbox" value="fuzz">ファズ</label>
+      <label class="toggle" title="軽くザラつくクランチ"><input type="checkbox" value="crunch">クランチ</label>
+      <label class="toggle" title="アンプを押した自然なドライブ"><input type="checkbox" value="overdrive">オーバードライブ</label>
+      <label class="toggle" title="ごく軽いローゲイン歪み"><input type="checkbox" value="low-gain">ローゲイン</label>
+      <label class="toggle" title="ビット落ちのザラつき"><input type="checkbox" value="bitcrush">ビットクラッシュ</label>
+      <label class="toggle" title="圧縮感強めのタイトな歪み"><input type="checkbox" value="compressed">コンプ強め</label>
+      <label class="toggle" title="高域がキラつくクリーン"><input type="checkbox" value="glassy clean">キラキラクリーン</label>
+      <label class="toggle" title="甘めで丸いブルース系ドライブ"><input type="checkbox" value="bluesy drive">ブルース系ドライブ</label>
+      <label class="toggle" title="古めの温かいドライブ感"><input type="checkbox" value="vintage drive">ビンテージドライブ</label>
+      <label class="toggle" title="オクターブ上を足したファズ"><input type="checkbox" value="octave fuzz">オクターブファズ</label>
+      <label class="toggle" title="分厚く滑らかなマフ系ファズ"><input type="checkbox" value="muff-style fuzz">マフ系ファズ</label>
+      <label class="toggle" title="タイトで低域締まったメタル寄り"><input type="checkbox" value="djent tone">ジェント系</label>
+      <label class="toggle" title="低域重めで鈍く分厚いドゥーム系"><input type="checkbox" value="doom tone">ドゥーム系</label>
+    </div>
+    <div>弾き方：</div>
+    <div class="btn-row" data-group="gtr-play">
+      <label class="toggle" title="単音なしでコードだけ弾く"><input type="checkbox" value="chords only">コードのみ</label>
+      <label class="toggle" title="軽くミュートして刻むカッティング"><input type="checkbox" value="cutting">カッティング</label>
+      <label class="toggle" title="分散和音中心のアルペジオ"><input type="checkbox" value="arpeggio">アルペジオ</label>
+      <label class="toggle" title="オクターブユニゾン主体のコード"><input type="checkbox" value="octave chords">オクターブコード</label>
+      <label class="toggle" title="パワーコード主体で弾く"><input type="checkbox" value="power chords">パワーコード</label>
+      <label class="toggle" title="開放弦を活かしたコード"><input type="checkbox" value="open chords">オープンコード</label>
+      <label class="toggle" title="スライドを多用するフレーズ"><input type="checkbox" value="slide phrases">スライド多用</label>
+      <label class="toggle" title="ハンマリング／プリング主体"><input type="checkbox" value="hammer-on/pull-off runs">ハンマリング/プリング</label>
+      <label class="toggle" title="滑らかにつなぐレガート"><input type="checkbox" value="legato">レガート</label>
+      <label class="toggle" title="指弾きでコードやリフを弾く"><input type="checkbox" value="fingerstyle">フィンガースタイル</label>
+      <label class="toggle" title="ハーモニクス多用"><input type="checkbox" value="harmonics">ハーモニクス</label>
+    </div>
+    <div>帯域：</div>
+    <div class="btn-row" data-group="gtr-eq">
+      <label class="toggle" title="中低域が太く腹に来る音"><input type="checkbox" value="low-mid heavy">ロー・ミッド太め</label>
+      <label class="toggle" title="中高域が刺さるギラギラした音"><input type="checkbox" value="upper-mid bite">アッパーミッド強め</label>
+      <label class="toggle" title="中域が前に出るロック向き"><input type="checkbox" value="mid-forward">ミッド前寄り</label>
+      <label class="toggle" title="中域が引っ込み低高だけ強い"><input type="checkbox" value="scooped">スクープ</label>
+      <label class="toggle" title="暗めでこもった感じの音色"><input type="checkbox" value="dark">ダーク</label>
+      <label class="toggle" title="明るく抜けるトーン"><input type="checkbox" value="bright">ブライト</label>
+      <label class="toggle" title="帯域が狭く電話っぽい音"><input type="checkbox" value="narrow">ナロー</label>
+      <label class="toggle" title="高域を落として丸める"><input type="checkbox" value="hi-cut">ハイカット</label>
+      <label class="toggle" title="低域を落として軽くする"><input type="checkbox" value="low-cut">ローカット</label>
+      <label class="toggle" title="高域がふわっと伸びる"><input type="checkbox" value="airy top">エアリーな高域</label>
+      <label class="toggle" title="低域がしっかり厚い"><input type="checkbox" value="thick low end">厚い低域</label>
+      <label class="toggle" title="クセの少ないバランス型"><input type="checkbox" value="balanced">バランス型</label>
+    </div>
+  </div>
+
+  <!-- キーボード -->
+  <div class="group">
+    <h2>キーボード（Keys）</h2>
+    <div>音色：</div>
+    <div class="btn-row" data-group="keys-type">
+      <label class="toggle" title="アコースティックピアノ系"><input type="checkbox" value="piano">ピアノ</label>
+      <label class="toggle" title="ローズ/ウーリッツァーなどのエレピ系"><input type="checkbox" value="electric piano">エレピ</label>
+      <label class="toggle" title="ハモンドなどのオルガン系"><input type="checkbox" value="organ">オルガン</label>
+      <label class="toggle" title="シンセパッド"><input type="checkbox" value="synth pad">シンセパッド</label>
+      <label class="toggle" title="シンセリード"><input type="checkbox" value="synth lead">シンセリード</label>
+    </div>
+    <div>質感：</div>
+    <div class="btn-row" data-group="keys-tone">
+      <label class="toggle" title="ウォームで丸いトーン"><input type="checkbox" value="warm">ウォーム</label>
+      <label class="toggle" title="明るくシャイニーなトーン"><input type="checkbox" value="bright">ブライト</label>
+      <label class="toggle" title="ローファイで劣化した質感"><input type="checkbox" value="lo-fi">ローファイ</label>
+      <label class="toggle" title="アナログっぽい質感"><input type="checkbox" value="analog-ish">アナログ寄り</label>
+      <label class="toggle" title="デジタルでクリーンな質感"><input type="checkbox" value="digital clean">デジタルクリーン</label>
+    </div>
+  </div>
+
+  <!-- ベース -->
+  <div class="group">
+    <h2>ベース（Bass）</h2>
+    <div>弾き方：</div>
+    <div class="btn-row" data-group="bass-tech">
+      <label class="toggle" title="指で弾く基本スタイル"><input type="checkbox" value="fingerstyle">指弾き</label>
+      <label class="toggle" title="ピックで弾くタイトなスタイル"><input type="checkbox" value="pick">ピック</label>
+      <label class="toggle" title="スラップで叩く奏法"><input type="checkbox" value="slap">スラップ</label>
+    </div>
+    <div>奏法：</div>
+    <div class="btn-row" data-group="bass-play">
+      <label class="toggle" title="ルート音だけを弾く土台役"><input type="checkbox" value="roots only">ルートのみ</label>
+      <label class="toggle" title="オクターブ飛び主体の動き"><input type="checkbox" value="octave jumps">オクターブジャンプ</label>
+      <label class="toggle" title="ウォーキングで動き続ける"><input type="checkbox" value="walking">ウォーキング</label>
+      <label class="toggle" title="小さな対旋律を入れる"><input type="checkbox" value="counter line">対旋律</label>
+      <label class="toggle" title="ベースがグルーヴの主役になる"><input type="checkbox" value="groove lead">グルーヴ主導</label>
+      <label class="toggle" title="短く切るパルス的なノリ"><input type="checkbox" value="staccato pulses">スタッカート</label>
+      <label class="toggle" title="滑らかにつなぐライン"><input type="checkbox" value="legato lines">レガートライン</label>
+      <label class="toggle" title="スライド多めの滑り"><input type="checkbox" value="slides gliss">スライド多め</label>
+      <label class="toggle" title="シンコペーション多めに刻む"><input type="checkbox" value="syncopated riffs">シンコペ多め</label>
+      <label class="toggle" title="超低域を強調して重さ担当"><input type="checkbox" value="sub weight focus">サブの重さ担当</label>
+    </div>
+    <div>役割：</div>
+    <div class="btn-row" data-group="bass-role">
+      <label class="toggle" title="超低域の重さ担当"><input type="checkbox" value="sub weight">サブの重さ</label>
+      <label class="toggle" title="グルーヴの主役になる"><input type="checkbox" value="groove lead">グルーヴ主導</label>
+      <label class="toggle" title="ギターとユニゾンで塊になる"><input type="checkbox" value="guitar lock">ギターとロック</label>
+      <label class="toggle" title="キックとタイトにシンクロ"><input type="checkbox" value="kick lock">キックとロック</label>
+      <label class="toggle" title="和音の土台として静かに支える"><input type="checkbox" value="chord support">コードサポート</label>
+      <label class="toggle" title="小さな対旋律で彩る"><input type="checkbox" value="counter melody">対旋律</label>
+      <label class="toggle" title="一定音で土台を敷き続ける"><input type="checkbox" value="drone bed">ドローンベッド</label>
+      <label class="toggle" title="リズムの合いの手を入れる"><input type="checkbox" value="rhythmic stab">リズミックな差し込み</label>
+      <label class="toggle" title="短いフレーズでフックを作る"><input type="checkbox" value="melodic hook">メロディックフック</label>
+      <label class="toggle" title="1音を踏んで上物が動く土台になる"><input type="checkbox" value="pedal point">ペダルポイント</label>
+      <label class="toggle" title="他パートと掛け合いする"><input type="checkbox" value="call response">コール&レスポンス</label>
+      <label class="toggle" title="控えめな音量で空気感を足す"><input type="checkbox" value="atmospheric pad">アトモス的に支える</label>
+    </div>
+  </div>
+
+  <!-- ドラム -->
+  <div class="group">
+    <h2>ドラム（Drums）</h2>
+    <div>拍子 / ノリ：</div>
+    <div class="btn-row" data-group="drums-meter">
+      <label class="toggle" title="標準的な4拍子ロックノリ"><input type="checkbox" value="straight 4/4">ストレート4/4</label>
+      <label class="toggle" title="シャッフル・スウィング感あり"><input type="checkbox" value="shuffle swing">シャッフル/スウィング</label>
+      <label class="toggle" title="三連系のノリ"><input type="checkbox" value="triplet feel">三連フィール</label>
+      <label class="toggle" title="変拍子だけど踊れる感じ"><input type="checkbox" value="odd but danceable">変拍子だけど踊れる</label>
+      <label class="toggle" title="しっかりしたポリリズム感"><input type="checkbox" value="polyrhythm heavy">ポリリズム強め</label>
+      <label class="toggle" title="6/8の揺れ"><input type="checkbox" value="6/8 feel">6/8フィール</label>
+      <label class="toggle" title="3/4のワルツ感"><input type="checkbox" value="waltz 3/4">ワルツ3/4</label>
+    </div>
+    <div>タイミング：</div>
+    <div class="btn-row" data-group="drums-timing">
+      <label class="toggle" title="わずかに後ろに溜めるノリ"><input type="checkbox" value="laid-back">レイドバック</label>
+      <label class="toggle" title="前のめりに走るノリ"><input type="checkbox" value="ahead rushing">前のめり</label>
+      <label class="toggle" title="クオンタイズ感強めで機械的"><input type="checkbox" value="on-the-grid">オン・ザ・グリッド</label>
+      <label class="toggle" title="人間味のある自然なブレ"><input type="checkbox" value="human feel">ヒューマンフィール</label>
+      <label class="toggle" title="タイトで揺れほぼなし"><input type="checkbox" value="tight quantized">タイトで正確</label>
+      <label class="toggle" title="シャッフル寄りに置く配置"><input type="checkbox" value="swung placement">スウィング寄り配置</label>
+    </div>
+    <div>人間味：</div>
+    <div class="btn-row" data-group="drums-human">
+      <label class="toggle" title="人間らしいわずかなブレあり"><input type="checkbox" value="human">ヒューマン</label>
+      <label class="toggle" title="タイトで正確な演奏"><input type="checkbox" value="tight">タイト</label>
+      <label class="toggle" title="酔っぱらいのように危ういヨレ"><input type="checkbox" value="drunk">ヨレヨレ</label>
+      <label class="toggle" title="機械のように無感情で正確"><input type="checkbox" value="machine">マシンライク</label>
+      <label class="toggle" title="ドラムセット自体がルーズに響く"><input type="checkbox" value="loose kit">ルーズなキット感</label>
+    </div>
+  </div>
+
+  <!-- 出力とボタン -->
+  <div class="top-bar">
+    <div>↓ ここがコピペ用プロンプト（英語）</div>
+    <div>
+      <button id="copyButton">Copy</button>
+      <button id="resetButton">Reset</button>
+    </div>
+  </div>
+
+  <textarea id="output" readonly></textarea>
+
+  <script>
+    function updateToggleStyles() {
+      document.querySelectorAll("label.toggle").forEach(label => {
+        const input = label.querySelector("input");
+        if (input.checked) {
+          label.classList.add("active");
+        } else {
+          label.classList.remove("active");
+        }
+      });
+    }
+
+    function getGroupValues(groupName) {
+      const group = document.querySelector('.btn-row[data-group="' + groupName + '"]');
+      if (!group) return [];
+      const vals = [];
+      group.querySelectorAll("input[type=checkbox]").forEach(inp => {
+        if (inp.checked) vals.push(inp.value);
+      });
+      return vals;
+    }
+
+    function buildPrompt() {
+      const genre = getGroupValues("genre");
+      const gtr = [
+        ...getGroupValues("gtr-dist"),
+        ...getGroupValues("gtr-play"),
+        ...getGroupValues("gtr-eq"),
+      ];
+      const keys = [
+        ...getGroupValues("keys-type"),
+        ...getGroupValues("keys-tone"),
+      ];
+      const bass = [
+        ...getGroupValues("bass-tech"),
+        ...getGroupValues("bass-play"),
+        ...getGroupValues("bass-role"),
+      ];
+      const drums = [
+        ...getGroupValues("drums-meter"),
+        ...getGroupValues("drums-timing"),
+        ...getGroupValues("drums-human"),
+      ];
+      const density = getGroupValues("density");
+      const dirt = getGroupValues("dirt");
+      const feeling = getGroupValues("feeling");
+      const bpm = document.getElementById("bpmInput").value || "";
+
+      const lines = [];
+      if (genre.length)   lines.push("ジャンル：" + genre.join(" + "));
+      if (gtr.length)     lines.push("ギター：" + gtr.join(" + "));
+      if (keys.length)    lines.push("キーボード：" + keys.join(" + "));
+      if (bass.length)    lines.push("ベース：" + bass.join(" + "));
+      if (drums.length)   lines.push("ドラム：" + drums.join(" + "));
+      if (density.length) lines.push("密度：" + density.join(" + "));
+      if (dirt.length)    lines.push("汚さ：" + dirt.join(" + "));
+      if (feeling.length) lines.push("感情：" + feeling.join(" + "));
+      if (bpm)            lines.push("BPM：" + bpm);
+
+      document.getElementById("output").value = lines.join("\n");
+    }
+
+    document.querySelectorAll("label.toggle input").forEach(input => {
+      input.addEventListener("change", () => {
+        updateToggleStyles();
+        buildPrompt();
+      });
+    });
+
+    document.getElementById("bpmInput").addEventListener("input", buildPrompt);
+
+    document.getElementById("copyButton").addEventListener("click", async () => {
+      const text = document.getElementById("output").value;
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        console.error("clipboard error", e);
+      }
+    });
+
+    document.getElementById("resetButton").addEventListener("click", () => {
+      document.querySelectorAll("label.toggle input").forEach(i => (i.checked = false));
+      document.getElementById("bpmInput").value = 120;
+      updateToggleStyles();
+      buildPrompt();
+    });
+
+    // 初期化
+    updateToggleStyles();
+    buildPrompt();
+  </script>
+</body>
+</html>
