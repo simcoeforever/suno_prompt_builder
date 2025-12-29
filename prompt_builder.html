@@ -83,6 +83,10 @@
       background: #444;
       color: #eee;
     }
+    #randomButton {
+      background: #f59e0b;
+      color: #000;
+    }
     .bpm-input {
       display: inline-flex;
       align-items: center;
@@ -114,10 +118,17 @@
 <body>
   <h1>SUNO Style Prompt Builder (JP Labels)</h1>
 
+  <div class="top-bar">
+    <div>
+      <button id="randomButton">Random</button>
+      <button id="resetButton">Reset</button>
+    </div>
+  </div>
+
   <!-- 全体 -->
   <div class="group">
     <h2>全体（Overall）</h2>
-    <div>感情（ポジティブ）：</div>
+    <div>世界観（ポジティブ）：</div>
     <div class="btn-row" data-group="feeling-positive">
       <label class="toggle" title="明るい"><input type="checkbox" value="bright">明るい</label>
       <label class="toggle" title="エネルギッシュ"><input type="checkbox" value="energetic">エネルギッシュ</label>
@@ -127,10 +138,11 @@
       <label class="toggle" title="輝くように明るい"><input type="checkbox" value="radiant">輝く</label>
       <label class="toggle" title="天才的なひらめき感"><input type="checkbox" value="brilliant">天才的</label>
     </div>
-    <div>感情（ネガティブ）：</div>
+    <div>世界観（ネガティブ）：</div>
     <div class="btn-row" data-group="feeling-negative">
       <label class="toggle" title="暗い・陰り"><input type="checkbox" value="dark">暗い</label>
       <label class="toggle" title="悲しい・ハッピーじゃない"><input type="checkbox" value="sad">悲しい</label>
+      <label class="toggle" title="切ない"><input type="checkbox" value="bittersweet">切ない</label>
       <label class="toggle" title="希望が持てない"><input type="checkbox" value="hopeless">絶望的</label>
       <label class="toggle" title="自滅的で破壊的"><input type="checkbox" value="self-destructive">自滅的</label>
       <label class="toggle" title="反抗的・反発的"><input type="checkbox" value="rebellious">反抗的</label>
@@ -138,7 +150,7 @@
       <label class="toggle" title="生意気で挑発的"><input type="checkbox" value="cheeky">生意気</label>
       <label class="toggle" title="調子に乗ったドヤ感"><input type="checkbox" value="smug">ドヤ感</label>
     </div>
-    <div>感情（昂揚・興奮）：</div>
+    <div>世界観（昂揚・興奮）：</div>
     <div class="btn-row" data-group="feeling-hype">
       <label class="toggle" title="情熱的"><input type="checkbox" value="passionate">情熱的</label>
       <label class="toggle" title="攻撃的"><input type="checkbox" value="aggressive">アグレッシブ</label>
@@ -148,7 +160,7 @@
       <label class="toggle" title="衝動的で抑えない"><input type="checkbox" value="impulsive">衝動的</label>
       <label class="toggle" title="若さの勢いで突っ走る"><input type="checkbox" value="youthful rush">若さの突っ走り</label>
     </div>
-    <div>感情（落ち着き）：</div>
+    <div>世界観（落ち着き）：</div>
     <div class="btn-row" data-group="feeling-calm">
       <label class="toggle" title="穏やか"><input type="checkbox" value="gentle">穏やか</label>
       <label class="toggle" title="安らか"><input type="checkbox" value="serene">安らか</label>
@@ -329,7 +341,6 @@
     <div>↓ ここがコピペ用プロンプト（英語）</div>
     <div>
       <button id="copyButton">Copy</button>
-      <button id="resetButton">Reset</button>
     </div>
   </div>
 
@@ -426,7 +437,7 @@
       if (drums.length)   lines.push("ドラム：" + drums.join(" + "));
       if (density)        lines.push("密度：" + density);
       if (dirt)           lines.push("汚さ：" + dirt);
-      if (feeling.length) lines.push("感情：" + feeling.join(" + "));
+      if (feeling.length) lines.push("世界観：" + feeling.join(" + "));
       if (bpm)            lines.push("BPM：" + bpm);
 
       document.getElementById("output").value = lines.join("\n");
@@ -459,11 +470,29 @@
       }
     });
 
+    document.getElementById("randomButton").addEventListener("click", () => {
+      const inputs = Array.from(document.querySelectorAll("label.toggle input"));
+      inputs.forEach(i => (i.checked = false));
+
+      const min = 3;
+      const max = 10;
+      const count = Math.min(
+        inputs.length,
+        Math.floor(Math.random() * (max - min + 1)) + min
+      );
+
+      for (let i = inputs.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [inputs[i], inputs[j]] = [inputs[j], inputs[i]];
+      }
+
+      inputs.slice(0, count).forEach(i => (i.checked = true));
+      updateToggleStyles();
+      buildPrompt();
+    });
+
     document.getElementById("resetButton").addEventListener("click", () => {
       document.querySelectorAll("label.toggle input").forEach(i => (i.checked = false));
-      document.getElementById("bpmInput").value = 120;
-      document.getElementById("densityRange").value = 40;
-      document.getElementById("dirtRange").value = 20;
       updateSliderLabels();
       updateToggleStyles();
       buildPrompt();
