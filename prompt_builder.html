@@ -176,16 +176,17 @@
       <label class="toggle" title="不穏でざわつく感じ"><input type="checkbox" value="ominous">不穏</label>
       <label class="toggle" title="美しいメロディ感"><input type="checkbox" value="beautiful melody">美メロ</label>
       <label class="toggle" title="美しいコード進行の雰囲気"><input type="checkbox" value="beautiful chords">美コード進行</label>
+      <label class="toggle" title="サイバーな世界観"><input type="checkbox" value="cyber">サイバー</label>
     </div>
-    <div>汚さ（Dirt）：</div>
+    <div>歪み感（Dirt）：</div>
     <div class="slider-row">
-      <input type="range" id="dirtRange" min="0" max="100" value="95" />
-      <span id="dirtLabel">クリーン</span>
+      <input type="range" id="dirtRange" min="0" max="100" value="80" />
+      <span id="dirtLabel">80</span>
     </div>
     <div>密度（Density）：</div>
     <div class="slider-row">
-      <input type="range" id="densityRange" min="0" max="100" value="95" />
-      <span id="densityLabel">ミドル</span>
+      <input type="range" id="densityRange" min="0" max="100" value="80" />
+      <span id="densityLabel">80</span>
     </div>
     <div class="bpm-input">
       <span>BPM：</span>
@@ -369,30 +370,18 @@
     }
 
     function getDensityLabel(val) {
-      if (val < 10) return "極薄ミニマル";
-      if (val < 30) return "ライト";
-      if (val < 50) return "ミドル";
-      if (val < 65) return "やや密";
-      if (val < 80) return "厚いけどクリア";
-      if (val < 90) return "ウォール気味";
-      return "超密＆ワイド";
+      return String(val);
     }
 
     function getDirtLabel(val) {
-      if (val < 10) return "クリーン";
-      if (val < 25) return "ややダーティ";
-      if (val < 45) return "軽いダート";
-      if (val < 60) return "サチュレート気味";
-      if (val < 75) return "グリッティ";
-      if (val < 90) return "ファズ/ノイジー";
-      return "フィルシー";
+      return String(val);
     }
 
     function updateSliderLabels() {
       const dVal = Number(document.getElementById("densityRange").value || 0);
       const dirtVal = Number(document.getElementById("dirtRange").value || 0);
-      document.getElementById("densityLabel").textContent = getDensityLabel(dVal);
-      document.getElementById("dirtLabel").textContent = getDirtLabel(dirtVal);
+      document.getElementById("densityLabel").textContent = String(dVal);
+      document.getElementById("dirtLabel").textContent = String(dirtVal);
     }
 
     function buildPrompt() {
@@ -436,7 +425,7 @@
       if (bass.length)    lines.push("ベース：" + bass.join(" + "));
       if (drums.length)   lines.push("ドラム：" + drums.join(" + "));
       if (density)        lines.push("密度：" + density);
-      if (dirt)           lines.push("汚さ：" + dirt);
+      if (dirt)           lines.push("歪み感：" + dirt);
       if (feeling.length) lines.push("世界観：" + feeling.join(" + "));
       if (bpm)            lines.push("BPM：" + bpm);
 
