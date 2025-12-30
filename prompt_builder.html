@@ -60,6 +60,7 @@
       border: 1px solid #333;
       border-radius: 4px;
       resize: vertical;
+      max-width: 480px;
     }
     .top-bar {
       display: flex;
@@ -87,6 +88,12 @@
       background: #f59e0b;
       color: #000;
     }
+    .inline-button {
+      margin-left: 8px;
+      padding: 4px 10px;
+      font-size: 11px;
+      vertical-align: middle;
+    }
     .bpm-input {
       display: inline-flex;
       align-items: center;
@@ -112,6 +119,11 @@
     .slider-row input[type=range] {
       flex: 1;
       min-width: 220px;
+    }
+    .free-text {
+      height: 80px;
+      margin-top: 6px;
+      max-width: 480px;
     }
   </style>
 </head>
@@ -177,18 +189,31 @@
       <label class="toggle" title="美しいメロディ感"><input type="checkbox" value="beautiful melody">美メロ</label>
       <label class="toggle" title="美しいコード進行の雰囲気"><input type="checkbox" value="beautiful chords">美コード進行</label>
       <label class="toggle" title="サイバーな世界観"><input type="checkbox" value="cyber">サイバー</label>
+      <label class="toggle" title="シンプルでわかりやすい"><input type="checkbox" value="simple">シンプル</label>
+      <label class="toggle" title="複雑で入り組んだ"><input type="checkbox" value="complex">複雑</label>
     </div>
+    <div>世界観メモ：</div>
+    <textarea id="worldNote" class="free-text" placeholder="世界観やイメージを自由にメモ"></textarea>
     <div>歪み感（Dirt）：</div>
     <div class="slider-row">
+      <label class="toggle" title="歪み感をプロンプトに含める">
+        <input type="checkbox" id="dirtInclude" checked>含める
+      </label>
       <input type="range" id="dirtRange" min="0" max="100" value="80" />
       <span id="dirtLabel">80</span>
     </div>
     <div>密度（Density）：</div>
     <div class="slider-row">
+      <label class="toggle" title="密度をプロンプトに含める">
+        <input type="checkbox" id="densityInclude" checked>含める
+      </label>
       <input type="range" id="densityRange" min="0" max="100" value="80" />
       <span id="densityLabel">80</span>
     </div>
     <div class="bpm-input">
+      <label class="toggle" title="BPMをプロンプトに含める">
+        <input type="checkbox" id="bpmInclude" checked>含める
+      </label>
       <span>BPM：</span>
       <input type="number" id="bpmInput" value="111" min="40" max="260" />
     </div>
@@ -339,10 +364,7 @@
 
   <!-- 出力とボタン -->
   <div class="top-bar">
-    <div>↓ ここがコピペ用プロンプト（英語）</div>
-    <div>
-      <button id="copyButton">Copy</button>
-    </div>
+    <div>↓ ここがコピペ用プロンプト（英語）<button id="copyButton" class="inline-button">Copy</button></div>
   </div>
 
   <textarea id="output" readonly></textarea>
@@ -409,6 +431,10 @@
       const dirtVal = Number(document.getElementById("dirtRange").value || 0);
       const density = getDensityLabel(densityVal);
       const dirt = getDirtLabel(dirtVal);
+      const densityInclude = document.getElementById("densityInclude").checked;
+      const dirtInclude = document.getElementById("dirtInclude").checked;
+      const bpmInclude = document.getElementById("bpmInclude").checked;
+      const worldNote = document.getElementById("worldNote").value.trim();
       const feeling = [
         ...getGroupValues("feeling-positive"),
         ...getGroupValues("feeling-negative"),
@@ -424,10 +450,11 @@
       if (keys.length)    lines.push("キーボード：" + keys.join(" + "));
       if (bass.length)    lines.push("ベース：" + bass.join(" + "));
       if (drums.length)   lines.push("ドラム：" + drums.join(" + "));
-      if (density)        lines.push("密度：" + density);
-      if (dirt)           lines.push("歪み感：" + dirt);
+      if (worldNote)      lines.push("世界観メモ：" + worldNote);
+      if (density && densityInclude) lines.push("密度：" + density);
+      if (dirt && dirtInclude)       lines.push("歪み感：" + dirt);
       if (feeling.length) lines.push("世界観：" + feeling.join(" + "));
-      if (bpm)            lines.push("BPM：" + bpm);
+      if (bpm && bpmInclude) lines.push("BPM：" + bpm);
 
       document.getElementById("output").value = lines.join("\n");
     }
@@ -440,6 +467,10 @@
     });
 
     document.getElementById("bpmInput").addEventListener("input", buildPrompt);
+    document.getElementById("densityInclude").addEventListener("change", buildPrompt);
+    document.getElementById("dirtInclude").addEventListener("change", buildPrompt);
+    document.getElementById("bpmInclude").addEventListener("change", buildPrompt);
+    document.getElementById("worldNote").addEventListener("input", buildPrompt);
     document.getElementById("densityRange").addEventListener("input", () => {
       updateSliderLabels();
       buildPrompt();
@@ -460,11 +491,20 @@
     });
 
     document.getElementById("randomButton").addEventListener("click", () => {
-      const inputs = Array.from(document.querySelectorAll("label.toggle input"));
+      const inputs = Array.from(
+        document.querySelectorAll(
+          '.btn-row[data-group="genre"] input,' +
+          '.btn-row[data-group="feeling-positive"] input,' +
+          '.btn-row[data-group="feeling-negative"] input,' +
+          '.btn-row[data-group="feeling-hype"] input,' +
+          '.btn-row[data-group="feeling-calm"] input,' +
+          '.btn-row[data-group="feeling-texture"] input'
+        )
+      );
       inputs.forEach(i => (i.checked = false));
 
       const min = 3;
-      const max = 10;
+      const max = 5;
       const count = Math.min(
         inputs.length,
         Math.floor(Math.random() * (max - min + 1)) + min
@@ -476,7 +516,11 @@
       }
 
       inputs.slice(0, count).forEach(i => (i.checked = true));
+      document.getElementById("densityRange").value = Math.floor(Math.random() * 101);
+      document.getElementById("dirtRange").value = Math.floor(Math.random() * 101);
+      document.getElementById("bpmInput").value = Math.floor(Math.random() * 81) + 60;
       updateToggleStyles();
+      updateSliderLabels();
       buildPrompt();
     });
 
