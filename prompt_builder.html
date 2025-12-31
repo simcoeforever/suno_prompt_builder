@@ -235,9 +235,6 @@
       </label>
 
       <!-- 方向性をちょい足しできるロック寄りジャンルたち -->
-      <label class="toggle" title="ロック全般">
-        <input type="checkbox" value="rock">ロック
-      </label>
       <label class="toggle" title="ブリットポップ的なキャッチーさ">
         <input type="checkbox" value="britpop">ブリットポップ
       </label>
@@ -247,14 +244,11 @@
       <label class="toggle" title="エレクトロ寄り全般">
         <input type="checkbox" value="electronic">エレクトロ
       </label>
+      <label class="toggle" title="ダンス向けのノリ">
+        <input type="checkbox" value="dance">ダンス
+      </label>
       <label class="toggle" title="ヒップホップ全般">
         <input type="checkbox" value="hip hop">ヒップホップ
-      </label>
-      <label class="toggle" title="テクノ全般">
-        <input type="checkbox" value="techno">テクノ
-      </label>
-      <label class="toggle" title="ドラムンベース">
-        <input type="checkbox" value="drum & bass">ドラムンベース
       </label>
       <label class="toggle" title="民族音楽系の要素">
         <input type="checkbox" value="ethnic">民族系
@@ -262,8 +256,11 @@
       <label class="toggle" title="ダンス寄りEDM全般">
         <input type="checkbox" value="edm">EDM
       </label>
-      <label class="toggle" title="ダブのディレイ感・揺れ">
-        <input type="checkbox" value="dub">ダブ
+      <label class="toggle" title="ダブステップの重低音と揺れ">
+        <input type="checkbox" value="dubstep">ダブステップ
+      </label>
+      <label class="toggle" title="ポップ寄りのコーラス感">
+        <input type="checkbox" value="pop choir">ポップコーラス
       </label>
       <label class="toggle" title="ゴスペル的なコーラス/雰囲気">
         <input type="checkbox" value="gospel">ゴスペル
@@ -391,6 +388,25 @@
       return vals;
     }
 
+    let genreOrder = [];
+
+    function updateGenreOrder(input) {
+      const val = input.value;
+      if (input.checked) {
+        if (!genreOrder.includes(val)) genreOrder.push(val);
+      } else {
+        genreOrder = genreOrder.filter(v => v !== val);
+      }
+    }
+
+    function syncGenreOrder() {
+      const genreSet = new Set(getGroupValues("genre"));
+      genreOrder = genreOrder.filter(v => genreSet.has(v));
+      genreSet.forEach(v => {
+        if (!genreOrder.includes(v)) genreOrder.push(v);
+      });
+    }
+
     function getDensityLabel(val) {
       return String(val);
     }
@@ -407,7 +423,8 @@
     }
 
     function buildPrompt() {
-      const genre = getGroupValues("genre");
+      syncGenreOrder();
+      const genre = genreOrder;
       const gtr = [
         ...getGroupValues("gtr-dist"),
         ...getGroupValues("gtr-play"),
@@ -461,6 +478,10 @@
 
     document.querySelectorAll("label.toggle input").forEach(input => {
       input.addEventListener("change", () => {
+        const group = input.closest(".btn-row")?.dataset?.group || "";
+        if (group === "genre") {
+          updateGenreOrder(input);
+        }
         updateToggleStyles();
         buildPrompt();
       });
@@ -502,6 +523,7 @@
         )
       );
       inputs.forEach(i => (i.checked = false));
+      genreOrder = [];
 
       const min = 3;
       const max = 5;
@@ -516,6 +538,10 @@
       }
 
       inputs.slice(0, count).forEach(i => (i.checked = true));
+      genreOrder = inputs
+        .slice(0, count)
+        .filter(i => i.closest(".btn-row")?.dataset?.group === "genre")
+        .map(i => i.value);
       document.getElementById("densityRange").value = Math.floor(Math.random() * 101);
       document.getElementById("dirtRange").value = Math.floor(Math.random() * 101);
       document.getElementById("bpmInput").value = Math.floor(Math.random() * 81) + 60;
@@ -526,12 +552,14 @@
 
     document.getElementById("resetButton").addEventListener("click", () => {
       document.querySelectorAll("label.toggle input").forEach(i => (i.checked = false));
+      genreOrder = [];
       updateSliderLabels();
       updateToggleStyles();
       buildPrompt();
     });
 
     // 初期化
+    genreOrder = getGroupValues("genre");
     updateSliderLabels();
     updateToggleStyles();
     buildPrompt();
