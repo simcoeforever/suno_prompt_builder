@@ -191,6 +191,7 @@
       <label class="toggle" title="サイバーな世界観"><input type="checkbox" value="cyber">サイバー</label>
       <label class="toggle" title="シンプルでわかりやすい"><input type="checkbox" value="simple">シンプル</label>
       <label class="toggle" title="複雑で入り組んだ"><input type="checkbox" value="complex">複雑</label>
+      <label class="toggle" title="8-bit / チップチューン風"><input type="checkbox" value="8-bit">8-bit</label>
     </div>
     <div>世界観メモ：</div>
     <textarea id="worldNote" class="free-text" placeholder="世界観やイメージを自由にメモ"></textarea>
@@ -249,6 +250,9 @@
       </label>
       <label class="toggle" title="ヒップホップ全般">
         <input type="checkbox" value="hip hop">ヒップホップ
+      </label>
+      <label class="toggle" title="メロディックなトリップホップ">
+        <input type="checkbox" value="melodic trip-hop">トリポップ
       </label>
       <label class="toggle" title="民族音楽系の要素">
         <input type="checkbox" value="ethnic">民族系
@@ -552,6 +556,7 @@
 
     document.getElementById("resetButton").addEventListener("click", () => {
       document.querySelectorAll("label.toggle input").forEach(i => (i.checked = false));
+      document.getElementById("worldNote").value = "";
       genreOrder = [];
       updateSliderLabels();
       updateToggleStyles();
