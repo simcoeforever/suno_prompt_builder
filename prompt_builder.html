@@ -94,6 +94,31 @@
       font-size: 11px;
       vertical-align: middle;
     }
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .tab-button {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #1a1a1a;
+      color: #eee;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .tab-button.active {
+      background: #eab308;
+      color: #000;
+      border-color: #facc15;
+    }
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel.active {
+      display: block;
+    }
     .bpm-input {
       display: inline-flex;
       align-items: center;
@@ -125,17 +150,28 @@
       margin-top: 6px;
       max-width: 480px;
     }
+    .memo-area {
+      height: 240px;
+      max-width: 640px;
+    }
   </style>
 </head>
 <body>
   <h1>SUNO Style Prompt Builder (JP Labels)</h1>
 
-  <div class="top-bar">
-    <div>
-      <button id="randomButton">Random</button>
-      <button id="resetButton">Reset</button>
-    </div>
+  <div class="tabs">
+    <button class="tab-button active" data-tab="builder">ビルダー</button>
+    <button class="tab-button" data-tab="prompt-memo">プロンプトメモ</button>
+    <button class="tab-button" data-tab="lyrics-memo">歌詞メモ</button>
   </div>
+
+  <div id="tab-builder" class="tab-panel active">
+    <div class="top-bar">
+      <div>
+        <button id="randomButton">Random</button>
+        <button id="resetButton">Reset</button>
+      </div>
+    </div>
 
   <!-- 全体 -->
   <div class="group">
@@ -369,6 +405,31 @@
   </div>
 
   <textarea id="output" readonly></textarea>
+  </div>
+
+  <div id="tab-prompt-memo" class="tab-panel">
+    <div class="group">
+      <h2>プロンプトメモ</h2>
+      <textarea id="promptMemo" class="memo-area" placeholder="プロンプトのメモを自由に書く"></textarea>
+      <div class="top-bar">
+        <div>
+          <button id="savePromptMemo">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-lyrics-memo" class="tab-panel">
+    <div class="group">
+      <h2>歌詞メモ</h2>
+      <textarea id="lyricsMemo" class="memo-area" placeholder="歌詞のメモを自由に書く"></textarea>
+      <div class="top-bar">
+        <div>
+          <button id="saveLyricsMemo">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     function updateToggleStyles() {
@@ -563,11 +624,39 @@
       buildPrompt();
     });
 
+    function setActiveTab(tabName) {
+      document.querySelectorAll(".tab-button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+      document.querySelectorAll(".tab-panel").forEach(panel => {
+        panel.classList.toggle("active", panel.id === "tab-" + tabName);
+      });
+    }
+
+    document.querySelectorAll(".tab-button").forEach(btn => {
+      btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
+    });
+
+    function loadMemo(key, elementId) {
+      const val = localStorage.getItem(key);
+      if (val !== null) document.getElementById(elementId).value = val;
+    }
+
+    document.getElementById("savePromptMemo").addEventListener("click", () => {
+      localStorage.setItem("promptMemo", document.getElementById("promptMemo").value);
+    });
+
+    document.getElementById("saveLyricsMemo").addEventListener("click", () => {
+      localStorage.setItem("lyricsMemo", document.getElementById("lyricsMemo").value);
+    });
+
     // 初期化
     genreOrder = getGroupValues("genre");
     updateSliderLabels();
     updateToggleStyles();
     buildPrompt();
+    loadMemo("promptMemo", "promptMemo");
+    loadMemo("lyricsMemo", "lyricsMemo");
   </script>
 </body>
 </html>
